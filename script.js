@@ -95,25 +95,6 @@ const customerEmail = document.getElementById("customer-email").value;
         primaryProduct = "sunscreen";
     }
 
-    // =========================
-// SEND DATA TO GOOGLE SHEETS
-
-fetch("https://script.google.com/macros/s/AKfycbxcNbijkfeSVqK9f72uahxUm2jcWHzNwJYPVm2dA1YXOZ9nHRUlW9irdd_hWCcz-Ms/exec", {
-    method: "POST",
-    headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify({
-        name: customerName,
-        email: customerEmail,
-        skinConcern: concern,
-        skinType: skinType,
-        outdoorExposure: outdoor,
-        routineGoal: goal,
-        recommendation: primaryProduct
-    })
-});
-
 
     // =========================
     // SUPPORTING PRODUCTS
@@ -169,6 +150,28 @@ fetch("https://script.google.com/macros/s/AKfycbxcNbijkfeSVqK9f72uahxUm2jcWHzNwJ
         });
     }
 
+    // =========================
+// SEND DATA TO GOOGLE SHEETS
+// =========================
+
+fetch("https://script.google.com/macros/s/AKfycbxcNbijkfeSVqK9f72uahxUm2jcWHzNwJYPVm2dA1YXOZ9nHRUlW9irdd_hWCcz-Ms/exec", {
+    method: "POST",
+    headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+        name: customerName,
+        email: customerEmail,
+        skinConcern: concern,
+        skinType: skinType,
+        outdoorExposure: outdoor,
+        routineGoal: goal,
+        recommendation: products[primaryProduct].name,
+        supportingRecommendations: supportingProducts.map(function (item) {
+            return products[item.product].name;
+        })
+    })
+});
 
     // =========================
     // DISPLAY
@@ -299,51 +302,35 @@ buyButtons.forEach(function (button) {
 
 });
 
-    // =========================
-    // PERSONALIZED MESSAGE
-    // =========================
+// =========================
+// PERSONALIZED MESSAGE
+// =========================
 
-    if (concern === "breakouts") {
+if (concern === "breakouts") {
+    recommendationTitle.textContent =
+        `${customerName}, here's your skin match for clearer-looking skin.`;
+}
+else if (concern === "oil") {
+    recommendationTitle.textContent =
+        `${customerName}, here's your skin match for balanced-looking skin.`;
+}
+else if (concern === "dryness") {
+    recommendationTitle.textContent =
+        `${customerName}, here's your skin match for hydrated-looking skin.`;
+}
+else {
+    recommendationTitle.textContent =
+        `${customerName}, here's your NOVA SKIN match.`;
+}
 
-        recommendationTitle.textContent =
-    `${customerName}, here's your skin match for clearer-looking skin.`;
-
-
-        recommendationText.textContent =
-            "Based on your answers, we've selected a primary product for your main concern and supporting products where they may be useful.";
-
-    }
-
-    else if (concern === "oil") {
-
-        recommendationTitle.textContent =
-    `${customerName}, here's your skin match for balanced-looking skin.`;
-
-        recommendationText.textContent =
-            "We've selected a primary product for your main concern and added supporting products based on your skin type and routine.";
-
-    }
-
-    else if (concern === "dryness") {
-
-        recommendationTitle.textContent =
-    `${customerName}, here's your skin match for hydrated-looking skin.`;
-
-
-        recommendationText.textContent =
-            "We've selected a primary product for your main concern and added supporting products where appropriate.";
-
-    }
-
-    else {
-
-            recommendationTitle.textContent =
-    `${customerName}, here's your NOVA SKIN match.`;
-
-        recommendationText.textContent =
-            "Based on your answers, we've selected the products that best fit the needs you shared.";
-
-    }
+if (supportingProducts.length > 0) {
+    recommendationText.textContent =
+        "We've selected a primary product for your main concern and added supporting products based on your skin type and routine.";
+}
+else {
+    recommendationText.textContent =
+        "We've selected the product that best matches your main skin concern and routine.";
+}
 
 
     // Show recommendation
