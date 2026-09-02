@@ -109,6 +109,20 @@ nav {
 .nav-links {
     display: flex;
     gap: 30px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: flex-start;
+    scrollbar-width: none;
+}
+
+.nav-links::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-links a {
+    font-size: 0.95rem;
+    flex-shrink: 0;
 }
 
 .nav-links a {
